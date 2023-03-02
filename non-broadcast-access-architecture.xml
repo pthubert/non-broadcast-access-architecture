@@ -17,7 +17,7 @@
 updates="" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-thubert-non-broadcast-access-architecture-00" >
 
 <front>
-  <title abbrev="Ipv6 over NBMA">Architecture and Framework for IPv6 over Non-Broadcast Access"</title>
+  <title abbrev="IPv6 over NBMA">Architecture and Framework for IPv6 over Non-Broadcast Access"</title>
 
    <author initials='P' surname='Thubert' fullname='Pascal Thubert' role='editor'>
       <organization abbrev='Cisco Systems'>Cisco Systems, Inc</organization>
@@ -135,6 +135,8 @@ updates="" consensus="true" submissionType="IETF" xml:lang="en" version="3" docN
     the 64-bit Interface IDs (IIDs) that makes a collision quasi-impossible for
     randomized IIDs.
     </t>
+    <t>Arguably, IPv6 ND brought the support if multicast that should have reduced the broadcast traffic for DAD and AR, but in practice IPv6 ND multicast messages are mapped to link-layer broadcast on Ethernet and Wireless networks, and replication on overlays. The multicast model to Solicited Node Multicast Addresses (SNMA) probably does not make much economical sense either, since it would mean close to one state per address is every switch (there's usually only one address with the same SNMA, though the birthday paradox applies) when a complete ND cache would require only one state in every router, and there are typically far less routers than switches in the subnet.
+   </t>
     <t>
     Multicast NS transmissions may occur when a node joins the
     network, moves, or wakes up and reconnects to the network.
@@ -188,9 +190,9 @@ updates="" consensus="true" submissionType="IETF" xml:lang="en" version="3" docN
     <t>
     Like Transparent Bridging, the IPv6 <xref target="RFC8200"/> Neighbor
     Discovery <xref target="RFC4861"/> <xref target="RFC4862"/> Protocol
-    (ND-Classic) is reactive, and relies on on-demand Network Layer multicast to
-    locate an on-link correspondent (Address Resolution, AR) and ensure the
-    uniqueness of an IPv6 address (Duplicate Address Detection, aka DAD) in the case of Stateless Address Autoconfiguration (SLAAC).
+    (ND-Classic) is reactive, and relies on reactive Network Layer multicast for AR to
+    locate an on-link correspondent and DAD to ensure the
+    uniqueness of an IPv6 address in the case of Stateless Address Autoconfiguration (SLAAC).
     On Ethernet LANs and most WLANs and Low-Power
     Personal Area Networks (LoWPANs), the Network Layer multicast operation is
     typically implemented as a link-layer broadcast for the lack
@@ -242,7 +244,7 @@ updates="" consensus="true" submissionType="IETF" xml:lang="en" version="3" docN
    Broadcast IPv6 ND NS messages used for lookup and DAD intend to reach at most one node. When those messages is used over the fabric and the target is a silent node, which location is unknown to the fabric, either the NS message is broadcasted, or the packet is lost, meaning that the silent node will not be reachable again until it provides its own sign of life. Using a BUM transmission that reaches every nodes to communicate with at most one is a misuse of the overlay resources and should be replaced by unicast-based methods.
    </t>
    <t>
-   In data centers, overlays are typically combined with multihoming at the edge. An advanced Network Interface Card (NIC) is equipped with more than one physical adapter (Ethernet) for redundancy, and the physical adapters connect to difference leaf switches (ToR) to the same cloud network. The server (say, using Kubernetes) needs a single address and would rather use that address on both ports to the same Subnet, and use either adapter for its own reasons, e.g., load balancing, independently of IP addressing considerations. This means that the Interface abstraction that the server needs is a logical construct, decoupled from the physical adapters, and capable to encompass more than one.
+   In data centers, overlays are typically combined with multihoming at the edge. An advanced Network Interface Card (NIC) is equipped with more than one physical adapter (typically Ethernet) for redundancy, and the physical adapters connect to different leaf switches (aka ToR) to the same cloud network. The server (say, using Kubernetes) needs a single address and would rather use that address on both ports to the same Subnet, and use either adapter for its own reasons, e.g., load balancing, independently of IP addressing considerations. This means that the Interface abstraction that the server needs is a logical construct, decoupled from the physical adapters, and capable to encompass more than one.
    </t>
    </section> <!-- "The case of Overlays" -->
 
@@ -251,6 +253,9 @@ updates="" consensus="true" submissionType="IETF" xml:lang="en" version="3" docN
    Misusing broadcast entails extraneous power consumption in any switched or wireless environment.
    In the wireless case, broadcasts are sent at the slowest speed available in order to maximize the chances that all nodes in the BSS will receive the frame; not only does this consume more precious bandwidth than anycast transmission and generate interferes which may cascade in losses and retries in adjacent networks, this also means that power is consumed for a longer time (can be hundred time more) than for unicast.
    Power is also wasted when replicating a packet to span an overlay. In all cases, to make the internet greener, we must reconsider the use of broadcast over large access networks. To maintain the capability to build the Subnets we want, this means that we must decouple the Subnet from the broadcast domain, make the broadcast domain small and local, and refocus the use of broadcast to the cases where all nodes are interested.
+   </t>
+   <t>
+   Constrained IoT devices conserve their power by placing themselves in deep sleep for most of the time. While a device is sleeping, it cannot answer IPv6 ND messages for AR and DAD. This makes IPv6 ND unsuitable to IoT devices. The 6LoWPAN WG has determined that the most appropriate model for a constrained network is a pull model where the device wakes up, negotiates with its router(s) for addresses and connectivity for some amount of time in the future, and goes back to sleep. The router can then perform a role of sleep proxy that defends the address(es) and holds traffic for the device till the device wakes up and pulls it from the router. Additionally, when the constrained network grows into a mesh, broadcast operations become rapidly inacceptable in terms of power and bandwidth, and the not-only model whereby for the most part hosts do not lookup one another, is mandatory.
    </t>
    </section> <!-- "Power and Sustainability" -->
 
@@ -285,9 +290,21 @@ updates="" consensus="true" submissionType="IETF" xml:lang="en" version="3" docN
    <t>
    Maybe the most insidious side effect of those middleboxes is that as opposed to NAT, they are obfuscated and proprietary. From one vendor to the next, and one product generation to the next, their behavior may evolve and affect the ND protocol in different fashions. In the short term, this may only impact some specific deployments, which may have to work around the issues. But worse than that, this may affect the future and the capability we have to evolve the protocols, like firewalls impact our capability to develop new transports in parallel to TCP and UDP. We must either standardize (e.g., for ND proxy) or eliminate those middlebox activities, and for that, the IPv6 ND protocol must evolve to a model where the middleboxes are not needed anymore. This means that we need a model that minimizes the use of broadcasts, and where a contract provides mutual guarantees for the host that need IPv6 addresses and the routers that provide reachability and protection for these addresses.
    </t>
-   </section> <!-- "Power and Sustainability" -->
+   </section> <!-- "More Middleboxes" -->
 
    <section anchor="summaryIssues"> <name>Summary of Issues</name>
+   <t>
+   IPv6 ND inherited 2 majors design points from IPv4, a strong coupling of logical and physical concepts, which creates unacceptable constraints on modern deployments with virtual and intangible links, and a reactive operation for AR and DAD that requires an extensive use of broadcast. While IPv4 and IPv6 behaviors are similar for addresses obtained via DHCP, the cost of AR and DAD makes IPv6 significantly more expensive with Stateless Address Autoconfiguration (SLAAC) is used. And while IPv4 supported NBMA and P2MP models (e.g., on Frame Relay leveraging OSPFv2), the IPv6 promise to support NBMA (for ATM) remained unmet to this day, and only P2P and Transit links are properly supported by IPv6 ND. For those reasons, IPv6 with SLAAC can be significantly less attractive than IPv4 to some network administrators.
+   </t>
+   <t>
+   IPv6 ND exposes all addresses to all nodes in the network, which is unfit for privacy. It is prone to DOS attacks from outside the network and impersonation attacks from the inside, with no method to prove the address ownership and perform Source Address Validation (SAVI) later on the data traffic. To protect against such threats, the vendors had to introduce middleboxes that interfere with the protocol operation and affect the capability to evolve the protocol in the future.
+   </t>
+   <t>IPv6 ND lack a support for mobility (which typically entails a sequence counter maintained by the host and the deprecation of state that is based on older sequences) and for anycast. This makes it very hard for the network to defend the addresses on behalf of the owner, e.g., when the owner is temporarily disconnected. It results that the operation of the middleboxes is unsatisfactory and may cause discontinuities in connectivity.
+   </t>
+   <t>
+   The broadcast operation is not only detrimental to bandwidth, it is also an issue for energy conservation and sustainability. Devices must be always attached and always powered on to answer lookups and DADs, which makes IPv6 ND unapplicable to constrained IoT devices that sleep for the vast majority of their time.
+   The key design points in this architecture derive from the original observations made at the 6LoWPAN WG, and focus on avoiding waste of constrained resources such as spectrum and energy, by using broadcasts only when broadcast is really needed, and decoupling the IP abstraction of a Subnet from the broadcast domains.
+   </t>
    </section> <!-- "Summary of Issues" -->
 
 </section><!-- "Issues with Classical IPv6 Access" -->
