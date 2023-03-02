@@ -625,7 +625,7 @@ The EARO provides information to the router that is independent to the routing p
 </t>
 
 <t>
-Wireless ND (WiND) is an example instanciation of the Architecture presented in <xref target="NBNTArchi"/>; it combines SFAAC with a Backbone Router (6BBR) ND proxy function (more in <xref target="RFC8929"/>) operating as a Layer-3 Access Point. Multiple 6BBRs placed along the wireless edge of a Backbone link handle IPv6 Neighbor Discovery and forward packets over the backbone on behalf of the registered nodes on the wireless edge.
+Wireless ND (WiND) is an example instantiation of the Architecture presented in <xref target="NBNTArchi"/>; it combines SFAAC with a Backbone Router (6BBR) ND proxy function (more in <xref target="RFC8929"/>) operating as a Layer-3 Access Point. Multiple 6BBRs placed along the wireless edge of a Backbone link handle IPv6 Neighbor Discovery and forward packets over the backbone on behalf of the registered nodes on the wireless edge.
 This enables to span a subnet over an MLSN that federates edge wireless links with a high-speed, typically Ethernet, backbone (as a Layer-3 ESS). The ND proxy maintains the reachability for Global Unicast and Link-Local Addresses within the federated MLSN, either as a routing proxy where it replies with its own MAC address or as a bridging proxy that typically forwards the multicast ND messages as unicast Layer-2 frames to their target. The wireless nodes can form any address they want and move freely from a wireless edge link to another, without renumbering.
 In that case, the registrar is distributed between the 6BBR, each 6BBR maintaining only a state for the subset of the addresses that were registered to it and for which it is authoritative. When the 6BBR is not currently authoritative for a new address being registererd to it, it relies on Classical ND that is used reactively over the backbone to obtain an existing registration state in
 
@@ -723,13 +723,13 @@ There are also a number of practical use cases in the wireless world where links
 <li> The IEEE Std. 802.11 infrastructure BSS enables one subnet per AP, and emulates a broadcast domain at the link-layer. The Infrastructure ESS extends that model over a backbone and recommends the use of an ND proxy <xref target="IEEEstd80211"/> to interoperate with Ethernet-connected nodes. WiND incorporates an ND proxy to serve that need, which was missing so far.
 </li>
 
-<li> BlueTooth is Hub-and-Spoke at the link-layer. It would make little sense to configure a different subnet between the central and each individual peripheral node (e.g., sensor). Rather, <xref target="RFC7668"/> allocates a prefix to the central node acting as router, and each peripheral host (acting as a host) forms one or more address(es) from that same prefix and registers it.
+<li> Bluetooth is Hub-and-Spoke at the link-layer. It would make little sense to configure a different subnet between the central and each individual peripheral node (e.g., sensor). Rather, <xref target="RFC7668"/> allocates a prefix to the central node acting as router, and each peripheral host (acting as a host) forms one or more address(es) from that same prefix and registers it.
 </li>
 
 <li>
-<t> A typical Smartgrid networks puts together Route-Over MLSNs that comprise thousands of IPv6 nodes. The 6TiSCH architecture <xref target="RFC9030"/> presents the Route-Over model over an IEEE Std. 802.15.4 Time-Slotted Channel-Hopping (TSCH) <xref target="IEEEstd802154"/> mesh, and generalizes it for multiple other applications.
+<t> A typical SmartGrid networks puts together Route-Over MLSNs that comprise thousands of IPv6 nodes. The 6TiSCH architecture <xref target="RFC9030"/> presents the Route-Over model over an IEEE Std. 802.15.4 Time-Slotted Channel-Hopping (TSCH) <xref target="IEEEstd802154"/> mesh, and generalizes it for multiple other applications.
 </t><t>
-Each node in a Smartgrid network may have tens to a hundred others nodes in range. A key problem for the routing protocol is which other node(s) should this node peer with, because most of the possible peers do not provide added routing value. When both energy and bandwidth are constrained, talking to them is a waste of resources and most of the possible P2P links are not even used. Peerings that are actually used come and go with the dynamics of radio signal propagation. It results that allocating prefixes to all the possible P2P links and maintain as many addresses in all nodes is not even considered.
+Each node in a SmartGrid network may have tens to a hundred others nodes in range. A key problem for the routing protocol is which other node(s) should this node peer with, because most of the possible peers do not provide added routing value. When both energy and bandwidth are constrained, talking to them is a waste of resources and most of the possible P2P links are not even used. Peerings that are actually used come and go with the dynamics of radio signal propagation. It results that allocating prefixes to all the possible P2P links and maintain as many addresses in all nodes is not even considered.
 </t>
 </li>
 </ul>
@@ -746,7 +746,7 @@ About the size of the registrar, the backbone router enables a distribution of i
 
 <!--
 
-A radio mesh in our smartgrid deployments has thousands of nodes, each with 10s to 100 others in range. A key problem for the routing protocol is who should this node peer with, because you see, most of the possible peers are no added value and both energy and bandwidth are limited so even talking to them is a bad idea.
+A radio mesh in our SmartGrid deployments has thousands of nodes, each with 10s to 100 others in range. A key problem for the routing protocol is who should this node peer with, because you see, most of the possible peers are no added value and both energy and bandwidth are limited so even talking to them is a bad idea.
 
 Even if we could e.g., by stretching homenet, nobody is willing to spend energy and bandwidth allocating prefixes to all the possible pairs or maintain as many addresses in all nodes.
 Renumbering a meter means talking to a central application to indicate a new address. No one wants that either.
@@ -876,7 +876,7 @@ The host instantiates an IP link where the router's address is not a duplicate. 
 The lifetime in the registration should start with a small value (X=RMin, TBD), and exponentially grow with each re-registration to a larger value (X=Rmax, TBD). The IP link is considered down when (X=NbBeacons, TDB) expected messages are not received in a row. It must be noted that the physical link flapping does not affect the state of the registration and when a physical link comes back up, the active registrations (i.e., registrations for which lifetime is not elapsed) are still usable. Packets should be held or destroyed when the IP link is down.
 </t>
 <t>
-P2P links may be federated in Hub-and-Spoke by edge routers, and the Subnet may comprise multiple edge routers, in which case each advertises its registered addresses over the Subnet GateWay protocol as illustrated in <xref target="figReg2"/>. Note that the Extended DAR/DAC exchange can be ommitted if it can be replaced with the information that is distributed in the SGP, see for instance <xref target="RFC9010"/> which applies to IoT environments, which needs only the first EDAR/EDAC exchange, and <xref target="I-D.thubert-bess-secure-evpn-mac-signaling"/>, for EVPN-based wireless deployments in enterprise and campus, which does not use EDAR/EDAC at all.
+P2P links may be federated in Hub-and-Spoke by edge routers, and the Subnet may comprise multiple edge routers, in which case each advertises its registered addresses over the SGP as illustrated in <xref target="figReg2"/>. Note that the Extended DAR/DAC exchange can be omitted if it can be replaced with the information that is distributed in the SGP, see for instance <xref target="RFC9010"/> which applies to IoT environments, which needs only the first EDAR/EDAC exchange, and <xref target="I-D.thubert-bess-secure-evpn-mac-signaling"/>, for EVPN-based wireless deployments in enterprise and campus, which does not use EDAR/EDAC at all.
 </t>
 
 <figure anchor='figReg2'> <name>RFC 8505 Registration Flow for a Global Address</name>
@@ -918,7 +918,7 @@ P2P links may be federated in Hub-and-Spoke by edge routers, and the Subnet may 
 </figure>
 
 <t>
-Rhis can be combined with a legacy backbone operating Classical ND that federates the Subnet as illustrated in the case of RPL in <xref target="figReg3"/>. More details on the operation of WiND and RPL over the MLSN can be found in section 3.1, 3.2, 4.1 and 4.2.2 of <xref target="RFC9030"/>.
+This can be combined with a legacy backbone operating Classical ND that federates the Subnet as illustrated in the case of RPL in <xref target="figReg3"/> leveraging <xref target="RFC8929"/>. More details on the operation of WiND and RPL over the MLSN can be found in section 3.1, 3.2, 4.1 and 4.2.2 of <xref target="RFC9030"/>.
 </t>
 
 <figure anchor='figReg3'> <name>Initial Registration Flow with 6BBR ND-Proxy</name>
@@ -942,9 +942,11 @@ Rhis can be combined with a legacy backbone operating Classical ND that federate
          |               |-------------->|               |
          |               |               |  NS(EARO)     |
          |               |               |-------------->|
-         |               |               |               | NS-DAD
+         |               |               |  proxy registration
+         |               |               |               |
+         |               |               |         NS-DAD (EARO)
          |               |               |               |------>
-         |               |               |               | (EARO)
+         |               |               |               ND proxy
          |               |               |               |
          |               |               |  NA(EARO)     |<timeout>
          |               |               |<--------------|
@@ -970,8 +972,13 @@ An example Hub-and-Spoke is an OCB Road-Side Unit (RSU) that owns a prefix, prov
 
    <section  anchor='sec' > <name>Security Considerations</name>
       <t>
-         This specification refers to the security sections of ND-Classic and WiND,
-         respectively.
+         Classical ND exposes all addresses to all nodes in the Subnet, which is a privacy issue and makes impersonation attacks easier. In contrast, this framework limits that knowledge to the routers and the abstract registrar, which are typically more controlled / harder to hack than the common host. The framework
+         allows for a mixed environement with both model coexisting, more in <xref target="RFC8929"/>. In that case, the properties are those of the lower denominator on each Link.
+      </t>
+      <t>The registration model <xref target="RFC8505"/> implemented by this framework allows for a model where the ingress routers have a full knowledge of all the addresses in the Subnet. The ingress router can thus discard any packet which destination appears to be in the Subnet from its prefix, but is not known, meaning that it does not exist. This mostly defeats the traditional DoS scanning attacks against ND whereby the remote attacker sends volumes of packets to as many non-existent addresses to saturate the Neighbor Cache and clog the Subnet internal bandwidth in broadcasts.
+      </t>
+      <t>When the ownership verifier is cryptographic, this framework enables a zerotrust model whereby only the address owner can advertise an address in ND and as source of data packets, more in <xref target="RFC8928"/>.
+      This defeats the classical impersonation attacks against IPv6 ND and allows to disable the proprietary middlebox software aimed at protecting the address ownership against onlink rogues.
       </t>
    </section>
    <section > <name>Acknowledgments</name>

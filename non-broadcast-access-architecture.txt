@@ -1290,7 +1290,7 @@ Thubert & Richardson    Expires 3 September 2023               [Page 23]
 Internet-Draft               IPv6 over NBMA                   March 2023
 
 
-   Wireless ND (WiND) is an example instanciation of the Architecture
+   Wireless ND (WiND) is an example instantiation of the Architecture
    presented in Section 3; it combines SFAAC with a Backbone Router
    (6BBR) ND proxy function (more in [RFC8929]) operating as a Layer-3
    Access Point.  Multiple 6BBRs placed along the wireless edge of a
@@ -1470,20 +1470,20 @@ Internet-Draft               IPv6 over NBMA                   March 2023
       interoperate with Ethernet-connected nodes.  WiND incorporates an
       ND proxy to serve that need, which was missing so far.
 
-   *  BlueTooth is Hub-and-Spoke at the link-layer.  It would make
+   *  Bluetooth is Hub-and-Spoke at the link-layer.  It would make
       little sense to configure a different subnet between the central
       and each individual peripheral node (e.g., sensor).  Rather,
       [RFC7668] allocates a prefix to the central node acting as router,
       and each peripheral host (acting as a host) forms one or more
       address(es) from that same prefix and registers it.
 
-   *  A typical Smartgrid networks puts together Route-Over MLSNs that
+   *  A typical SmartGrid networks puts together Route-Over MLSNs that
       comprise thousands of IPv6 nodes.  The 6TiSCH architecture
       [RFC9030] presents the Route-Over model over an IEEE Std. 802.15.4
       Time-Slotted Channel-Hopping (TSCH) [IEEEstd802154] mesh, and
       generalizes it for multiple other applications.
 
-      Each node in a Smartgrid network may have tens to a hundred others
+      Each node in a SmartGrid network may have tens to a hundred others
       nodes in range.  A key problem for the routing protocol is which
       other node(s) should this node peer with, because most of the
       possible peers do not provide added routing value.  When both
@@ -1722,13 +1722,13 @@ Internet-Draft               IPv6 over NBMA                   March 2023
 
    P2P links may be federated in Hub-and-Spoke by edge routers, and the
    Subnet may comprise multiple edge routers, in which case each
-   advertises its registered addresses over the Subnet GateWay protocol
-   as illustrated in Figure 2.  Note that the Extended DAR/DAC exchange
-   can be ommitted if it can be replaced with the information that is
-   distributed in the SGP, see for instance [RFC9010] which applies to
-   IoT environments, which needs only the first EDAR/EDAC exchange, and
-   [EVPN-SFAAC], for EVPN-based wireless deployments in enterprise and
-   campus, which does not use EDAR/EDAC at all.
+   advertises its registered addresses over the SGP as illustrated in
+   Figure 2.  Note that the Extended DAR/DAC exchange can be omitted if
+   it can be replaced with the information that is distributed in the
+   SGP, see for instance [RFC9010] which applies to IoT environments,
+   which needs only the first EDAR/EDAC exchange, and [EVPN-SFAAC], for
+   EVPN-based wireless deployments in enterprise and campus, which does
+   not use EDAR/EDAC at all.
 
 
 
@@ -1774,11 +1774,11 @@ Internet-Draft               IPv6 over NBMA                   March 2023
 
          Figure 2: RFC 8505 Registration Flow for a Global Address
 
-   Rhis can be combined with a legacy backbone operating Classical ND
+   This can be combined with a legacy backbone operating Classical ND
    that federates the Subnet as illustrated in the case of RPL in
-   Figure 3.  More details on the operation of WiND and RPL over the
-   MLSN can be found in section 3.1, 3.2, 4.1 and 4.2.2 of [RFC9030].
-
+   Figure 3 leveraging [RFC8929].  More details on the operation of WiND
+   and RPL over the MLSN can be found in section 3.1, 3.2, 4.1 and 4.2.2
+   of [RFC9030].
 
 
 
@@ -1813,9 +1813,11 @@ Internet-Draft               IPv6 over NBMA                   March 2023
             |               |-------------->|               |
             |               |               |  NS(EARO)     |
             |               |               |-------------->|
-            |               |               |               | NS-DAD
+            |               |               |  proxy registration
+            |               |               |               |
+            |               |               |         NS-DAD (EARO)
             |               |               |               |------>
-            |               |               |               | (EARO)
+            |               |               |               ND proxy
             |               |               |               |
             |               |               |  NA(EARO)     |<timeout>
             |               |               |<--------------|
@@ -1843,8 +1845,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
 
 
 
-
-
 Thubert & Richardson    Expires 3 September 2023               [Page 33]
 
 Internet-Draft               IPv6 over NBMA                   March 2023
@@ -1852,8 +1852,30 @@ Internet-Draft               IPv6 over NBMA                   March 2023
 
 7.  Security Considerations
 
-   This specification refers to the security sections of ND-Classic and
-   WiND, respectively.
+   Classical ND exposes all addresses to all nodes in the Subnet, which
+   is a privacy issue and makes impersonation attacks easier.  In
+   contrast, this framework limits that knowledge to the routers and the
+   abstract registrar, which are typically more controlled / harder to
+   hack than the common host.  The framework allows for a mixed
+   environement with both model coexisting, more in [RFC8929].  In that
+   case, the properties are those of the lower denominator on each Link.
+
+   The registration model [RFC8505] implemented by this framework allows
+   for a model where the ingress routers have a full knowledge of all
+   the addresses in the Subnet.  The ingress router can thus discard any
+   packet which destination appears to be in the Subnet from its prefix,
+   but is not known, meaning that it does not exist.  This mostly
+   defeats the traditional DoS scanning attacks against ND whereby the
+   remote attacker sends volumes of packets to as many non-existent
+   addresses to saturate the Neighbor Cache and clog the Subnet internal
+   bandwidth in broadcasts.
+
+   When the ownership verifier is cryptographic, this framework enables
+   a zerotrust model whereby only the address owner can advertise an
+   address in ND and as source of data packets, more in [RFC8928].  This
+   defeats the classical impersonation attacks against IPv6 ND and
+   allows to disable the proprietary middlebox software aimed at
+   protecting the address ownership against onlink rogues.
 
 8.  Acknowledgments
 
@@ -1876,6 +1898,14 @@ Internet-Draft               IPv6 over NBMA                   March 2023
               DOI 10.17487/RFC4861, September 2007,
               <https://www.rfc-editor.org/info/rfc4861>.
 
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 34]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
+
    [RFC4862]  Thomson, S., Narten, T., and T. Jinmei, "IPv6 Stateless
               Address Autoconfiguration", RFC 4862,
               DOI 10.17487/RFC4862, September 2007,
@@ -1894,17 +1924,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
               Locator/ID Separation Protocol (LISP)", RFC 6830,
               DOI 10.17487/RFC6830, January 2013,
               <https://www.rfc-editor.org/info/rfc6830>.
-
-
-
-
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 34]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
 
    [RFC8200]  Deering, S. and R. Hinden, "Internet Protocol, Version 6
               (IPv6) Specification", STD 86, RFC 8200,
@@ -1933,6 +1952,16 @@ Internet-Draft               IPv6 over NBMA                   March 2023
               DOI 10.17487/RFC3810, June 2004,
               <https://www.rfc-editor.org/info/rfc3810>.
 
+
+
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 35]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
+
    [RFC4291]  Hinden, R. and S. Deering, "IP Version 6 Addressing
               Architecture", RFC 4291, DOI 10.17487/RFC4291, February
               2006, <https://www.rfc-editor.org/info/rfc4291>.
@@ -1953,14 +1982,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
               Low-Power Wireless Personal Area Networks (6LoWPANs)",
               RFC 6775, DOI 10.17487/RFC6775, November 2012,
               <https://www.rfc-editor.org/info/rfc6775>.
-
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 35]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
 
    [RFC7668]  Nieminen, J., Savolainen, T., Isomaki, M., Patil, B.,
               Shelby, Z., and C. Gomez, "IPv6 over BLUETOOTH(R) Low
@@ -1988,6 +2009,15 @@ Internet-Draft               IPv6 over NBMA                   March 2023
               DOI 10.17487/RFC8365, March 2018,
               <https://www.rfc-editor.org/info/rfc8365>.
 
+
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 36]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
+
    [RFC8415]  Mrugalski, T., Siodelski, M., Volz, B., Yourtchenko, A.,
               Richardson, M., Jiang, S., Lemon, T., and T. Winters,
               "Dynamic Host Configuration Protocol for IPv6 (DHCPv6)",
@@ -2006,17 +2036,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
               Work in Progress, Internet-Draft, draft-ietf-rift-rift-16,
               12 September 2022, <https://datatracker.ietf.org/doc/html/
               draft-ietf-rift-rift-16>.
-
-
-
-
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 36]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
 
    [RFC9010]  Thubert, P., Ed. and M. Richardson, "Routing for RPL
               (Routing Protocol for Low-Power and Lossy Networks)
@@ -2047,6 +2066,14 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    [MCAST PROBLEMS]
               Perkins, C. E., McBride, M., Stanley, D., Kumari, W. A.,
               and J. C. Zúñiga, "Multicast Considerations over IEEE 802
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 37]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
+
               Wireless Media", Work in Progress, Internet-Draft, draft-
               ietf-mboned-ieee802-mcast-problems-15, 28 July 2021,
               <https://datatracker.ietf.org/doc/html/draft-ietf-mboned-
@@ -2064,15 +2091,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
               thubert-6lo-unicast-lookup-02, 8 November 2021,
               <https://datatracker.ietf.org/doc/html/draft-thubert-6lo-
               unicast-lookup-02>.
-
-
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 37]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
 
    [DAD APPROACHES]
               Nordmark, E., "Possible approaches to make DAD more robust
@@ -2104,6 +2122,14 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    [IEEE Std. 802.11]
               IEEE standard for Information Technology, "IEEE Standard
               for Information technology -- Telecommunications and
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 38]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
+
               information exchange between systems Local and
               metropolitan area networks-- Specific requirements Part
               11: Wireless LAN Medium Access Control (MAC) and Physical
@@ -2122,13 +2148,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
               IEEE standard for Information Technology, "IEEE Standard
               for Local and metropolitan area networks -- Part 15.4:
               Low-Rate Wireless Personal Area Networks (LR-WPANs)".
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 38]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
 
    [IEEE Std. 802.1]
               IEEE standard for Information Technology, "IEEE Standard
@@ -2155,25 +2174,6 @@ Authors' Addresses
 
    Email: mcr+ietf@sandelman.ca
    URI:   http://www.sandelman.ca/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
