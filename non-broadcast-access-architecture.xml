@@ -294,7 +294,10 @@ updates="" consensus="true" submissionType="IETF" xml:lang="en" version="3" docN
 
    <section anchor="summaryIssues"> <name>Summary of Issues</name>
    <t>
-   IPv6 ND inherited 2 majors design points from IPv4, a strong coupling of logical and physical concepts, which creates unacceptable constraints on modern deployments with virtual and intangible links, and a reactive operation for AR and DAD that requires an extensive use of broadcast. While IPv4 and IPv6 behaviors are similar for addresses obtained via DHCP, the cost of AR and DAD makes IPv6 significantly more expensive with Stateless Address Autoconfiguration (SLAAC) is used. And while IPv4 supported NBMA and P2MP models (e.g., on Frame Relay leveraging OSPFv2), the IPv6 promise to support NBMA (for ATM) remained unmet to this day, and only P2P and Transit links are properly supported by IPv6 ND. For those reasons, IPv6 with SLAAC can be significantly less attractive than IPv4 to some network administrators.
+   IPv6 ND inherited 2 majors design points from IPv4, a strong coupling of logical and physical concepts, which creates unacceptable constraints on modern deployments with virtual and intangible links, and a reactive operation for AR and DAD that requires an extensive use of broadcast. While IPv4 and IPv6 behaviors are similar for addresses obtained via DHCP, the cost of AR and DAD makes IPv6 significantly more expensive with Stateless Address Autoconfiguration (SLAAC) is used.
+      </t>
+   <t>
+   And while IPv4 supported NBMA and P2MP models (e.g., on Frame Relay leveraging OSPFv2), the IPv6 promise to support NBMA (for ATM) remained unmet to this day, and only P2P and Transit links are properly supported by IPv6 ND. For those reasons, IPv6 with SLAAC can be significantly less attractive than IPv4 to some network administrators.
    </t>
    <t>
    IPv6 ND exposes all addresses to all nodes in the network, which is unfit for privacy. It is prone to DOS attacks from outside the network and impersonation attacks from the inside, with no method to prove the address ownership and perform Source Address Validation (SAVI) later on the data traffic. To protect against such threats, the vendors had to introduce middleboxes that interfere with the protocol operation and affect the capability to evolve the protocol in the future.
