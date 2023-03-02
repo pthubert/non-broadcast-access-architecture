@@ -83,27 +83,27 @@ Table of Contents
      3.2.  Terminology . . . . . . . . . . . . . . . . . . . . . . .  14
        3.2.1.  IP Links  . . . . . . . . . . . . . . . . . . . . . .  14
        3.2.2.  IP Interfaces . . . . . . . . . . . . . . . . . . . .  15
-       3.2.3.  IP Subnets  . . . . . . . . . . . . . . . . . . . . .  15
-       3.2.4.  Subnet Gateway Protocols  . . . . . . . . . . . . . .  16
+       3.2.3.  IP Subnets  . . . . . . . . . . . . . . . . . . . . .  16
+       3.2.4.  Subnet Gateway Protocols  . . . . . . . . . . . . . .  17
        3.2.5.  Acronyms  . . . . . . . . . . . . . . . . . . . . . .  17
-     3.3.  IP Models . . . . . . . . . . . . . . . . . . . . . . . .  17
+     3.3.  IP Models . . . . . . . . . . . . . . . . . . . . . . . .  18
        3.3.1.  Physical Broadcast Domain . . . . . . . . . . . . . .  18
        3.3.2.  link-layer Broadcast Emulations . . . . . . . . . . .  19
        3.3.3.  Mapping the IPv6 link Abstraction . . . . . . . . . .  21
        3.3.4.  Mapping the IPv6 subnet Abstraction . . . . . . . . .  22
      3.4.  Stateful Address Autoconfiguration and Subnet Routing . .  23
    4.  A Framework for Stateful Address Autoconfiguration and Subnet
-           Routing . . . . . . . . . . . . . . . . . . . . . . . . .  23
-     4.1.  Implementing Stateful Address Autoconfiguration . . . . .  23
+           Routing . . . . . . . . . . . . . . . . . . . . . . . . .  24
+     4.1.  Implementing Stateful Address Autoconfiguration . . . . .  24
      4.2.  links and Link-Local Addresses  . . . . . . . . . . . . .  25
-     4.3.  Subnets and Global Addresses  . . . . . . . . . . . . . .  25
+     4.3.  Subnets and Global Addresses  . . . . . . . . . . . . . .  26
      4.4.  Anycast and Multicast Addresses . . . . . . . . . . . . .  26
-   5.  WiND Applicability  . . . . . . . . . . . . . . . . . . . . .  26
-     5.1.  Case of LPWANs  . . . . . . . . . . . . . . . . . . . . .  27
+   5.  WiND Applicability  . . . . . . . . . . . . . . . . . . . . .  27
+     5.1.  Case of LPWANs  . . . . . . . . . . . . . . . . . . . . .  28
      5.2.  Case of Infrastructure BSS and ESS  . . . . . . . . . . .  28
      5.3.  Case of Mesh Under Technologies . . . . . . . . . . . . .  29
-     5.4.  Case of DMB radios  . . . . . . . . . . . . . . . . . . .  29
-       5.4.1.  Using ND-Classic only . . . . . . . . . . . . . . . .  29
+     5.4.  Case of DMB radios  . . . . . . . . . . . . . . . . . . .  30
+       5.4.1.  Using ND-Classic only . . . . . . . . . . . . . . . .  30
        5.4.2.  Using Wireless ND . . . . . . . . . . . . . . . . . .  30
    6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  33
 
@@ -117,7 +117,7 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    7.  Security Considerations . . . . . . . . . . . . . . . . . . .  34
    8.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  34
    9.  Normative References  . . . . . . . . . . . . . . . . . . . .  34
-   10. Informative References  . . . . . . . . . . . . . . . . . . .  35
+   10. Informative References  . . . . . . . . . . . . . . . . . . .  36
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  39
 
 1.  Introduction
@@ -571,12 +571,14 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    use of broadcast.  While IPv4 and IPv6 behaviors are similar for
    addresses obtained via DHCP, the cost of AR and DAD makes IPv6
    significantly more expensive with Stateless Address Autoconfiguration
-   (SLAAC) is used.  And while IPv4 supported NBMA and P2MP models
-   (e.g., on Frame Relay leveraging OSPFv2), the IPv6 promise to support
-   NBMA (for ATM) remained unmet to this day, and only P2P and Transit
-   links are properly supported by IPv6 ND.  For those reasons, IPv6
-   with SLAAC can be significantly less attractive than IPv4 to some
-   network administrators.
+   (SLAAC) is used.
+
+   And while IPv4 supported NBMA and P2MP models (e.g., on Frame Relay
+   leveraging OSPFv2), the IPv6 promise to support NBMA (for ATM)
+   remained unmet to this day, and only P2P and Transit links are
+   properly supported by IPv6 ND.  For those reasons, IPv6 with SLAAC
+   can be significantly less attractive than IPv4 to some network
+   administrators.
 
    IPv6 ND exposes all addresses to all nodes in the network, which is
    unfit for privacy.  It is prone to DOS attacks from outside the
@@ -611,8 +613,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
 
 
 
-
-
 Thubert & Richardson    Expires 3 September 2023               [Page 11]
 
 Internet-Draft               IPv6 over NBMA                   March 2023
@@ -623,10 +623,12 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    This document introduces a new architecture to IPv6 Neighbor
    Discovery that is designed to apply to the WLANs and LoWPANs types of
    networks, as well as other Non-Broadcast Multi-Access (NBMA) networks
-   such as Data-Center overlays.  The architecture leverages the not-
-   onlink model and routing inside the subnet, which enables to form
-   potentially large MLSNs without creating a large broadcast domain at
-   the link-layer.
+   such as Data-Center overlays and more generally as a replacement to
+   the classical IPv6 ND in any network where the issues discussed in
+   Section 2 are detrimental to the network operation.  The architecture
+   leverages the not-onlink model and routing inside the subnet, which
+   enables to form potentially large MLSNs without creating a large
+   broadcast domain at the link-layer.
 
    To support the deployment agility that virtual (e.g., VxLAN overlays
    and pseudowires) and intangible (e.g., wireless, laser, and quantum)
@@ -664,8 +666,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    decoupled).  A Link-Local Address is associated to the IP Link
    directly.  Each SubInterface connects to the subset of those IP Links
    that reach other nodes in the Subnet.
-
-
 
 
 
@@ -776,8 +776,8 @@ Internet-Draft               IPv6 over NBMA                   March 2023
 
    *  an IP link can be Point to Point (P2P), Point to Point (P2MP,
       forming a partial mesh), NBMA (non-broadcast multi-access, fully
-      meshed), or transit (broadcast-capable and any-to-any).  With this
-      architecture, all links are abstracted as P2P.
+      meshed), or transit (broadcast-capable and any-to-any).
+
 
 
 
@@ -795,6 +795,35 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    routed, in which case the P2P IP links are congruent with the layer 2
    links, and the nodes that interconnect the links are routers.
 
+   This architecture only uses P2P Link abstractions.  A physical
+   interface may enable to reach to more than one peer at layer 2.  In
+   that case, this architecture maps each peer relationship as a
+   different IP Link.  A Link Local Address only needs to be unique
+   within that peer to peer relationship.
+
+       +--------------------
+       |
+       |   IP Link 1 ---------------------------> Node 1
+       |   IP Link 2 ---------------------------> Node 2
+       |                ...
+       |   IP Link N ---------------------------> Node N
+       |
+       +--------------------
+         Physical Interface
+
+                         Figure 1: Link Abstraction
+
+   If the Link-Layer address of the peer is not visible from the IP
+   layer when processing a message, then the IP layer cannot
+   discriminate the IP Link of packets arriving on the same interface,
+   and for that reason, it will reject a second registration for the
+   same Link Local Address by a second host, meaning that a Link Local
+   Address will have to be unique on a physical interface across IP
+   Links.= that this interface connects to.  In that case, the Link
+   Local Address of the peer is used to recognize the IP Link, and all
+   addresses registered with the same Link Local Address will be
+   associated to the that IP Link.
+
 3.2.2.  IP Interfaces
 
    As is the case for links, the term interface has been historically
@@ -805,6 +834,14 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    *  an IP Interface is an abstraction that connects the host with a
       collection of IP Links (for the purpose of link local
       communication) and bundles the interfaces for each IP Subnet in
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 15]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
+
       subInterfaces.  The host installs at least one link-local address
       on an IP Interface for each IP Link that is connected through that
       interface, and one subInterface per Subnet.  The same Link-Local
@@ -834,14 +871,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    operations, in which case the structure of links must be strictly
    hierarchical to avoid loops.
 
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 15]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
-
    [RFC8929] defines bridging and routing IPv6 ND proxies.  Both forms
    of ND proxies interconnect IP links and enable to isolate the layer 2
    broadcast domains.  But in the case of a bridging proxy, the layer 2
@@ -861,6 +890,13 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    collection of links; in that case, the scope of the link local
    addresses, which is the IP Link, is narrower than the span of the
    subnet.
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 16]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
 
    A subnet prefix is associated with the IP subnet, and a node is a
    member of an IP subnet when it has an IP address that derives from
@@ -890,14 +926,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    and no microloop.  A classical method in MANETs to achieve this is to
    sequence the movements and advertise the sequence in the routing
    protocol, so only routes with the most recent sequence can be
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 16]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
-
    followed, and once a packet starts following a route with a certain
    sequence, it must be discarded rather to have to follow a path with
    an older sequence.  To support this approach, the node that registers
@@ -918,6 +946,14 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    This document uses the following abbreviations:
 
    6BBR:  6LoWPAN Backbone Router
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 17]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
+
    6LN:  6LoWPAN Node
    6LR:  6LoWPAN Router
    ARO:  Address Registration Option
@@ -946,14 +982,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
 
 3.3.  IP Models
 
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 17]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
-
 3.3.1.  Physical Broadcast Domain
 
    At the physical (PHY) Layer, a broadcast domain is the set of nodes
@@ -972,6 +1000,15 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    the broadcast domain of a particular node can be still be seen as
    mostly constant and can be used to define a closure of nodes on which
    an upper Layer abstraction can be built.
+
+
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 18]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
 
    A PHY Layer communication can be established between two nodes if the
    physical broadcast domains of their unicast transmissions overlap.
@@ -992,23 +1029,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    words, the relation of radio connectivity is generally not
    transitive, meaning that A in range with B and B in range with C does
    not necessarily imply that A is in range with C.
-
-
-
-
-
-
-
-
-
-
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 18]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
 
 3.3.2.  link-layer Broadcast Emulations
 
@@ -1037,6 +1057,15 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    proactively install the relevant state in the mapping server as
    opposed to rely on reactive broadcast lookups to do so.
 
+
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 19]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
+
    An IEEE Std. 802.11 [IEEE Std. 802.11] Infrastructure Basic Service
    Set (BSS) also provides a transitive closure of nodes as defined by
    the broadcast domain of a central AP.  The AP relays both unicast and
@@ -1058,14 +1087,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    of unicast transmissions, or drop the message altogether, which may
    impact the upper layer protocols.  For instance, some APs may not
    copy Router Solicitation (RS) messages under the assumption that
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 19]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
-
    there is no router across the wireless interface.  This assumption
    may be correct at some point of time and may become incorrect in the
    future.  Another strategy used in Wi-Fi APS is to proxy protocols
@@ -1086,6 +1107,20 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    destination.  It is also possible in the original model to broadcast
    a gratuitous frame to advertise self throughout the bridged network,
    and that is also a broadcast.
+
+
+
+
+
+
+
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 20]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
 
    The process of the Wi-Fi association prepares a bridging state
    proactively at the AP, which avoids the need for a reactive broadcast
@@ -1108,19 +1143,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    As the cost of broadcast transmissions becomes increasingly
    expensive, there is a push to rethink the upper Layer protocols to
    reduce the dependency on broadcast operations.
-
-
-
-
-
-
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 20]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
 
 3.3.3.  Mapping the IPv6 link Abstraction
 
@@ -1148,6 +1170,14 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    but becomes highly detrimental to the unicast traffic, and becomes
    less and less energy-efficient and reliable as the network grows.
 
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 21]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
+
    On DMB radios, IP links between peers come and go as the individual
    physical broadcast domains of the transmitters meet and overlap.  The
    DAD operation cannot provide once and for all guarantees over the
@@ -1170,14 +1200,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    node.  This is why ND is applicable for P2P and transit links, but
    requires extensions for more complex topologies.
 
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 21]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
-
 3.3.4.  Mapping the IPv6 subnet Abstraction
 
    As introduced in Section 3.2.3, IPv6 also defines the concept of a
@@ -1199,6 +1221,18 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    system.  Note that a subnet may become partitioned due to the loss of
    a wired or wireless link, so even that operation is not necessarily
    obvious, more in [DAD APPROACHES].
+
+
+
+
+
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 22]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
 
    The IPv6 aggregation model relies on the property that a packet from
    the outside of a subnet can be routed to any router that belongs to
@@ -1227,13 +1261,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    between nodes that belong to the subnet, the subnet is not on-link
    and it extends beyond any of the federated links.
 
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 22]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
-
 3.4.  Stateful Address Autoconfiguration and Subnet Routing
 
    This Architecture defines a new operation for ND that is based on 2
@@ -1255,6 +1282,14 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    Interfaces.  Hosts do not expect the IP Subnet to be reachable over
    the L2 broadcast domain and rely on their routers to forward the
    packets inside and outside the Subnet.  In turn, the router expose to
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 23]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
+
    each other all the IPv6 addresses that are either owned or registered
    to it as host routes over a Subnet Gateway Protocol, an IGP that is
    specialized in routing inside the subnet and can be decoupled with
@@ -1281,15 +1316,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    Trees" [I-D.ietf-rift-rift] and "RPL: IPv6 Routing Protocol for
    Low-Power and Lossy Networks" [RFC6550] with [RFC9010].
 
-
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 23]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
-
    Wireless ND (WiND) is an example instantiation of the Architecture
    presented in Section 3; it combines SFAAC with a Backbone Router
    (6BBR) ND proxy function (more in [RFC8929]) operating as a Layer-3
@@ -1311,6 +1337,14 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    for a new address being registererd to it, it relies on Classical ND
    that is used reactively over the backbone to obtain an existing
    registration state in
+
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 24]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
 
    This framework allows other implementations of the abstract concept
    of the registrar.  For instance, [EVPN-SFAAC] allows to distribute
@@ -1334,18 +1368,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    perform unicast lookups [UNICAST AR] for addresses registered to the
    resolver and only broadcast when the unicast lookup fails.
 
-
-
-
-
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 24]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
-
 4.2.  links and Link-Local Addresses
 
    For Link-Local Addresses, DAD is typically performed between
@@ -1368,6 +1390,17 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    On the other hand, the uniqueness of Global and Unique-Local
    Addresses is validated at the subnet Level, using a logical registrar
    that is global to the subnet.
+
+
+
+
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 25]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
 
 4.3.  Subnets and Global Addresses
 
@@ -1393,15 +1426,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    It can be observed that this design builds a form of Network Layer
    Infrastructure BSS.
 
-
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 25]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
-
    A Route-Over MLSN is considered as a collection of Hub-and-Spoke
    where the Hubs form a connected dominating set of the member nodes of
    the subnet, and IPv6 routing takes place between the Hubs within the
@@ -1423,6 +1447,16 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    While IPv6 ND is defined for unicast addresses only,
    [I-D.ietf-6lo-multicast-registration] extends [RFC8505] for anycast
    and multicast IPv6 addresses.
+
+
+
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 26]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
 
    [I-D.ietf-6lo-multicast-registration] can be used as a replacement
    for MLDv2 [RFC3810] for use cases where broadcast are not desirable,
@@ -1450,14 +1484,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    But even in those cases where both are possible, WiND is preferable
    vs. ND because it reduces the need of broadcast.
 
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 26]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
-
    This is discussed in more details in the introduction of [RFC8929].
 
    There are also a number of practical use cases in the wireless world
@@ -1476,6 +1502,17 @@ Internet-Draft               IPv6 over NBMA                   March 2023
       [RFC7668] allocates a prefix to the central node acting as router,
       and each peripheral host (acting as a host) forms one or more
       address(es) from that same prefix and registers it.
+
+
+
+
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 27]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
 
    *  A typical SmartGrid networks puts together Route-Over MLSNs that
       comprise thousands of IPv6 nodes.  The 6TiSCH architecture
@@ -1501,19 +1538,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    saves the steps of neighbor Discovery and enables a very efficient
    stateful compression of the IPv6 header.
 
-
-
-
-
-
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 27]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
-
 5.2.  Case of Infrastructure BSS and ESS
 
    In contrast to IPv4, IPv6 enables a node to form multiple addresses,
@@ -1532,6 +1556,19 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    protocols is not a recommended technique and that it should only be
    used as last resort, when the WiND registration is not available to
    populate the state.
+
+
+
+
+
+
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 28]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
 
    The recommended alternative method is to use the WiND Registration
    for IPv6 Addresses.  This way, the AP exposes its capability to proxy
@@ -1562,14 +1599,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    operating as a bridging proxy though the routing proxy operation is
    also possible.  As a bridging proxy, the backbone router either
    replies to NS lookups with the MAC address of the STA, or preferably
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 28]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
-
    forwards the lookups to the STA as link-layer unicast frames to let
    the STA answer.  For the data plane, the backbone router acts as a
    normal AP and bridges the packets to the STA as usual.  As a routing
@@ -1589,6 +1618,13 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    While it is still possible to operate ND-Classic, the inefficiencies
    of the flooding operation make the associated operations even less
    desirable than in a BSS, and the use of WiND is highly recommended.
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 29]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
 
 5.4.  Case of DMB radios
 
@@ -1616,16 +1652,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    and-Spoke deployment is also possible where the Hub is the only
    router in the subnet and the Prefix is advertised as not on-link.
 
-
-
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 29]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
-
 5.4.2.  Using Wireless ND
 
    Though this can be achieved with ND-Classic, WiND is the recommended
@@ -1646,32 +1672,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    its RA messages.  The RA is sent over an unspecified IP link where it
    does not conflict to anyone, so DAD is not necessary at that stage.
 
-   The host instantiates an IP link where the router's address is not a
-   duplicate.  To achieve this, it forms a Link-Local Address that does
-   not conflict with that of the router and registers to the router
-   using [RFC8505].  If the router sent an RA(PIO), the host can also
-   autoconfigure an address from the advertised prefix and register it.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1681,6 +1681,12 @@ Thubert & Richardson    Expires 3 September 2023               [Page 30]
 
 Internet-Draft               IPv6 over NBMA                   March 2023
 
+
+   The host instantiates an IP link where the router's address is not a
+   duplicate.  To achieve this, it forms a Link-Local Address that does
+   not conflict with that of the router and registers to the router
+   using [RFC8505].  If the router sent an RA(PIO), the host can also
+   autoconfigure an address from the advertised prefix and register it.
 
          (host)          (router)
             |               |
@@ -1708,7 +1714,7 @@ Internet-Draft               IPv6 over NBMA                   March 2023
             |<--------------|
             |               |
 
-       Figure 1: RFC 8505 Registration Flow for a Link-Local Address
+       Figure 2: RFC 8505 Registration Flow for a Link-Local Address
 
    The lifetime in the registration should start with a small value
    (X=RMin, TBD), and exponentially grow with each re-registration to a
@@ -1723,13 +1729,7 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    P2P links may be federated in Hub-and-Spoke by edge routers, and the
    Subnet may comprise multiple edge routers, in which case each
    advertises its registered addresses over the SGP as illustrated in
-   Figure 2.  Note that the Extended DAR/DAC exchange can be omitted if
-   it can be replaced with the information that is distributed in the
-   SGP, see for instance [RFC9010] which applies to IoT environments,
-   which needs only the first EDAR/EDAC exchange, and [EVPN-SFAAC], for
-   EVPN-based wireless deployments in enterprise and campus, which does
-   not use EDAR/EDAC at all.
-
+   Figure 3.  Note that the Extended DAR/DAC exchange can be omitted if
 
 
 
@@ -1737,6 +1737,12 @@ Thubert & Richardson    Expires 3 September 2023               [Page 31]
 
 Internet-Draft               IPv6 over NBMA                   March 2023
 
+
+   it can be replaced with the information that is distributed in the
+   SGP, see for instance [RFC9010] which applies to IoT environments,
+   which needs only the first EDAR/EDAC exchange, and [EVPN-SFAAC], for
+   EVPN-based wireless deployments in enterprise and campus, which does
+   not use EDAR/EDAC at all.
 
        6LoWPAN Node        6LR             6LBR
          (host)          (router)       (registrar)
@@ -1772,19 +1778,13 @@ Internet-Draft               IPv6 over NBMA                   March 2023
             |               |               |
                            ...
 
-         Figure 2: RFC 8505 Registration Flow for a Global Address
+         Figure 3: RFC 8505 Registration Flow for a Global Address
 
    This can be combined with a legacy backbone operating Classical ND
    that federates the Subnet as illustrated in the case of RPL in
-   Figure 3 leveraging [RFC8929].  More details on the operation of WiND
+   Figure 4 leveraging [RFC8929].  More details on the operation of WiND
    and RPL over the MLSN can be found in section 3.1, 3.2, 4.1 and 4.2.2
    of [RFC9030].
-
-
-
-
-
-
 
 
 
@@ -1827,7 +1827,7 @@ Internet-Draft               IPv6 over NBMA                   March 2023
             |<--------------|               |               |
             |               |               |               |
 
-           Figure 3: Initial Registration Flow with 6BBR ND-Proxy
+           Figure 4: Initial Registration Flow with 6BBR ND-Proxy
 
    An example Hub-and-Spoke is an OCB Road-Side Unit (RSU) that owns a
    prefix, provides Internet connectivity using that prefix to On-Board
@@ -1854,7 +1854,14 @@ Internet-Draft               IPv6 over NBMA                   March 2023
 
    Classical ND exposes all addresses to all nodes in the Subnet, which
    is a privacy issue and makes impersonation attacks easier.  In
-   contrast, this framework limits that knowledge to the routers and the
+   contrast, in switched and wireless networks, a host is not on-path of
+   the unicast packets for registration and for data for other hosts, so
+   it cannot snoop the other addresses in the network.  A rogue host can
+   only discover the existence of an addresses by trying and failing to
+   register that address, but for that it would need to fathom which
+   address to try and that can be very hard in a /64 address space taht
+   is used wisely.  For that reasion, this framework limits that
+   knowledge to on-path snooping switches, to the routers and to the
    abstract registrar, which are typically more controlled / harder to
    hack than the common host.  The framework allows for a mixed
    environement with both model coexisting, more in [RFC8929].  In that
@@ -1889,14 +1896,7 @@ Internet-Draft               IPv6 over NBMA                   March 2023
               RFC 3963, DOI 10.17487/RFC3963, January 2005,
               <https://www.rfc-editor.org/info/rfc3963>.
 
-   [RFC4191]  Draves, R. and D. Thaler, "Default Router Preferences and
-              More-Specific Routes", RFC 4191, DOI 10.17487/RFC4191,
-              November 2005, <https://www.rfc-editor.org/info/rfc4191>.
 
-   [RFC4861]  Narten, T., Nordmark, E., Simpson, W., and H. Soliman,
-              "Neighbor Discovery for IP version 6 (IPv6)", RFC 4861,
-              DOI 10.17487/RFC4861, September 2007,
-              <https://www.rfc-editor.org/info/rfc4861>.
 
 
 
@@ -1905,6 +1905,15 @@ Thubert & Richardson    Expires 3 September 2023               [Page 34]
 
 Internet-Draft               IPv6 over NBMA                   March 2023
 
+
+   [RFC4191]  Draves, R. and D. Thaler, "Default Router Preferences and
+              More-Specific Routes", RFC 4191, DOI 10.17487/RFC4191,
+              November 2005, <https://www.rfc-editor.org/info/rfc4191>.
+
+   [RFC4861]  Narten, T., Nordmark, E., Simpson, W., and H. Soliman,
+              "Neighbor Discovery for IP version 6 (IPv6)", RFC 4861,
+              DOI 10.17487/RFC4861, September 2007,
+              <https://www.rfc-editor.org/info/rfc4861>.
 
    [RFC4862]  Thomson, S., Narten, T., and T. Jinmei, "IPv6 Stateless
               Address Autoconfiguration", RFC 4862,
@@ -1945,15 +1954,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
               "IPv6 Backbone Router", RFC 8929, DOI 10.17487/RFC8929,
               November 2020, <https://www.rfc-editor.org/info/rfc8929>.
 
-10.  Informative References
-
-   [RFC3810]  Vida, R., Ed. and L. Costa, Ed., "Multicast Listener
-              Discovery Version 2 (MLDv2) for IPv6", RFC 3810,
-              DOI 10.17487/RFC3810, June 2004,
-              <https://www.rfc-editor.org/info/rfc3810>.
-
-
-
 
 
 
@@ -1961,6 +1961,13 @@ Thubert & Richardson    Expires 3 September 2023               [Page 35]
 
 Internet-Draft               IPv6 over NBMA                   March 2023
 
+
+10.  Informative References
+
+   [RFC3810]  Vida, R., Ed. and L. Costa, Ed., "Multicast Listener
+              Discovery Version 2 (MLDv2) for IPv6", RFC 3810,
+              DOI 10.17487/RFC3810, June 2004,
+              <https://www.rfc-editor.org/info/rfc3810>.
 
    [RFC4291]  Hinden, R. and S. Deering, "IP Version 6 Addressing
               Architecture", RFC 4291, DOI 10.17487/RFC4291, February
@@ -2003,13 +2010,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
               per Host", RFC 8273, DOI 10.17487/RFC8273, December 2017,
               <https://www.rfc-editor.org/info/rfc8273>.
 
-   [RFC8365]  Sajassi, A., Ed., Drake, J., Ed., Bitar, N., Shekhar, R.,
-              Uttaro, J., and W. Henderickx, "A Network Virtualization
-              Overlay Solution Using Ethernet VPN (EVPN)", RFC 8365,
-              DOI 10.17487/RFC8365, March 2018,
-              <https://www.rfc-editor.org/info/rfc8365>.
-
-
 
 
 
@@ -2017,6 +2017,12 @@ Thubert & Richardson    Expires 3 September 2023               [Page 36]
 
 Internet-Draft               IPv6 over NBMA                   March 2023
 
+
+   [RFC8365]  Sajassi, A., Ed., Drake, J., Ed., Bitar, N., Shekhar, R.,
+              Uttaro, J., and W. Henderickx, "A Network Virtualization
+              Overlay Solution Using Ethernet VPN (EVPN)", RFC 8365,
+              DOI 10.17487/RFC8365, March 2018,
+              <https://www.rfc-editor.org/info/rfc8365>.
 
    [RFC8415]  Mrugalski, T., Siodelski, M., Volz, B., Yourtchenko, A.,
               Richardson, M., Jiang, S., Lemon, T., and T. Winters,
@@ -2058,14 +2064,8 @@ Internet-Draft               IPv6 over NBMA                   March 2023
               February 2014, <https://datatracker.ietf.org/doc/html/
               draft-vyncke-6man-mcast-not-efficient-01>.
 
-   [RFC9030]  Thubert, P., Ed., "An Architecture for IPv6 over the Time-
-              Slotted Channel Hopping Mode of IEEE 802.15.4 (6TiSCH)",
-              RFC 9030, DOI 10.17487/RFC9030, May 2021,
-              <https://www.rfc-editor.org/info/rfc9030>.
 
-   [MCAST PROBLEMS]
-              Perkins, C. E., McBride, M., Stanley, D., Kumari, W. A.,
-              and J. C. Zúñiga, "Multicast Considerations over IEEE 802
+
 
 
 
@@ -2074,6 +2074,14 @@ Thubert & Richardson    Expires 3 September 2023               [Page 37]
 Internet-Draft               IPv6 over NBMA                   March 2023
 
 
+   [RFC9030]  Thubert, P., Ed., "An Architecture for IPv6 over the Time-
+              Slotted Channel Hopping Mode of IEEE 802.15.4 (6TiSCH)",
+              RFC 9030, DOI 10.17487/RFC9030, May 2021,
+              <https://www.rfc-editor.org/info/rfc9030>.
+
+   [MCAST PROBLEMS]
+              Perkins, C. E., McBride, M., Stanley, D., Kumari, W. A.,
+              and J. C. Zúñiga, "Multicast Considerations over IEEE 802
               Wireless Media", Work in Progress, Internet-Draft, draft-
               ietf-mboned-ieee802-mcast-problems-15, 28 July 2021,
               <https://datatracker.ietf.org/doc/html/draft-ietf-mboned-
@@ -2113,6 +2121,15 @@ Internet-Draft               IPv6 over NBMA                   March 2023
               22 November 2022, <https://datatracker.ietf.org/doc/html/
               draft-ietf-6lo-multicast-registration-12>.
 
+
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 38]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
+
    [IEEE Std. 802.15.4]
               IEEE standard for Information Technology, "IEEE Std.
               802.15.4, Part. 15.4: Wireless Medium Access Control (MAC)
@@ -2122,14 +2139,6 @@ Internet-Draft               IPv6 over NBMA                   March 2023
    [IEEE Std. 802.11]
               IEEE standard for Information Technology, "IEEE Standard
               for Information technology -- Telecommunications and
-
-
-
-Thubert & Richardson    Expires 3 September 2023               [Page 38]
-
-Internet-Draft               IPv6 over NBMA                   March 2023
-
-
               information exchange between systems Local and
               metropolitan area networks-- Specific requirements Part
               11: Wireless LAN Medium Access Control (MAC) and Physical
@@ -2169,6 +2178,14 @@ Authors' Addresses
    Email: pthubert@cisco.com
 
 
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 39]
+
+Internet-Draft               IPv6 over NBMA                   March 2023
+
+
    Michael C. Richardson
    Sandelman Software Works
 
@@ -2181,4 +2198,43 @@ Authors' Addresses
 
 
 
-Thubert & Richardson    Expires 3 September 2023               [Page 39]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thubert & Richardson    Expires 3 September 2023               [Page 40]

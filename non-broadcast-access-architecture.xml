@@ -322,7 +322,8 @@ updates="" consensus="true" submissionType="IETF" xml:lang="en" version="3" docN
 
 
     <t>
-    This document introduces a new architecture to IPv6 Neighbor Discovery that is designed to apply to the WLANs and LoWPANs types of networks, as well as other Non-Broadcast Multi-Access (NBMA) networks such as Data-Center overlays. The architecture leverages the not-onlink model and routing inside the subnet, which enables to form potentially large MLSNs without creating a large broadcast domain at the link-layer.
+    This document introduces a new architecture to IPv6 Neighbor Discovery that is designed to apply to the WLANs and LoWPANs types of networks, as well as other Non-Broadcast Multi-Access (NBMA) networks such as Data-Center overlays and more generally as a replacement to the classical IPv6 ND in any network where the issues discussed in <xref target="NDIssues"/> are detrimental to the network operation.
+    The architecture leverages the not-onlink model and routing inside the subnet, which enables to form potentially large MLSNs without creating a large broadcast domain at the link-layer.
     </t>
     <t>
     To support the deployment agility that virtual (e.g., VxLAN overlays and pseudowires) and intangible (e.g., wireless, laser, and quantum) links enable, the IP abstractions of Interface, Link, and Subnet are decoupled from their classical physical counterparts of interface, link, and broadcast domains. The Subnet is defined by a /64 prefix, as the longest aggregation that can be advertised in the IGP with the outside. Host routes and longer prefixes are advertised inside the Subnet only, using a separate Subnet Gateway protocol.
@@ -379,11 +380,36 @@ layer 3 filters must restrict the link-scoped communication to remain between
 peers on a same IP link, and more than one IP link may be installed on the same
 physical interface to connect to different peers.
 </li>
-<li>an IP link can be Point to Point (P2P), Point to Point (P2MP, forming a partial mesh), NBMA (non-broadcast multi-access, fully meshed), or transit (broadcast-capable and any-to-any). With this architecture, all links are abstracted as P2P.
+<li>an IP link can be Point to Point (P2P), Point to Point (P2MP, forming a partial mesh), NBMA (non-broadcast multi-access, fully meshed), or transit (broadcast-capable and any-to-any).
 </li>
 
 </ul>
 <t>It is a network design decision to use one IP link model or another over a given lower layer network, e.g., to map a Frame Relay network as a P2MP IP link, or as a collection of P2P IP links. As another example, an Ethernet fabric may be bridged, in which case the nodes that interconnect the layer 2 links are L2 switches, and the fabric can be abstracted as a single transit IP link; or the fabric can be routed, in which case the P2P IP links are congruent with the layer 2 links, and the nodes that interconnect the links are routers.
+</t>
+<t> This architecture only uses P2P Link abstractions.
+A physical interface may enable to reach to more than one peer at layer 2.
+In that case, this architecture maps each peer relationship as a different IP Link.
+A Link Local Address only needs to be unique within that peer to peer relationship.
+</t>
+
+<figure anchor='figLink'><name>Link Abstraction</name>
+ <artwork><![CDATA[
+
+    +--------------------
+    |
+    |   IP Link 1 ---------------------------> Node 1
+    |   IP Link 2 ---------------------------> Node 2
+    |                ...
+    |   IP Link N ---------------------------> Node N
+    |
+    +--------------------
+      Physical Interface
+
+
+]]></artwork>
+</figure>
+<t>
+If the Link-Layer address of the peer is not visible from the IP layer when processing a message, then the IP layer cannot discriminate the IP Link of packets arriving on the same interface, and for that reason, it will reject a second registration for the same Link Local Address by a second host, meaning that a Link Local Address will have to be unique on a physical interface across IP Links.= that this interface connects to. In that case, the Link Local Address of the peer is used to recognize the IP Link, and all addresses registered with the same Link Local Address will be associated to the that IP Link.
 </t>
 
      </section><!-- IP Links -->
@@ -975,7 +1001,10 @@ An example Hub-and-Spoke is an OCB Road-Side Unit (RSU) that owns a prefix, prov
 
    <section  anchor='sec' > <name>Security Considerations</name>
       <t>
-         Classical ND exposes all addresses to all nodes in the Subnet, which is a privacy issue and makes impersonation attacks easier. In contrast, this framework limits that knowledge to the routers and the abstract registrar, which are typically more controlled / harder to hack than the common host. The framework
+    Classical ND exposes all addresses to all nodes in the Subnet, which is a privacy issue and makes impersonation attacks easier. In contrast, in switched and wireless networks, a host is not on-path of the unicast packets for registration and for data for other hosts, so it cannot snoop the other addresses in the network.
+    A rogue host can only discover the existence of an addresses by trying and failing to register that address, but for that it would need to fathom which address to try and that can be very hard in a /64 address space taht is used wisely.
+    For that reasion, this framework limits that knowledge to on-path snooping switches, to the routers and to the abstract registrar, which are typically more controlled / harder to hack than the common host.
+         The framework
          allows for a mixed environement with both model coexisting, more in <xref target="RFC8929"/>. In that case, the properties are those of the lower denominator on each Link.
       </t>
       <t>The registration model <xref target="RFC8505"/> implemented by this framework allows for a model where the ingress routers have a full knowledge of all the addresses in the Subnet. The ingress router can thus discard any packet which destination appears to be in the Subnet from its prefix, but is not known, meaning that it does not exist. This mostly defeats the traditional DoS scanning attacks against ND whereby the remote attacker sends volumes of packets to as many non-existent addresses to saturate the Neighbor Cache and clog the Subnet internal bandwidth in broadcasts.
